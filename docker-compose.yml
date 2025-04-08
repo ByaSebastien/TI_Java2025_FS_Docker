@@ -17,6 +17,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+    restart: unless-stopped
 
   api:
     build:
@@ -33,6 +34,7 @@ services:
         condition: service_healthy
     ports:
       - 8080:8080
+    restart: unless-stopped
 
   front:
     build:
@@ -41,10 +43,11 @@ services:
     ports:
       - 4200:80
     depends_on:
-      - api
+      api:
+        condition: service_started
     networks:
       - myNetwork
-    restart: always
+    restart: unless-stopped
 
 volumes:
   postgres_data:
